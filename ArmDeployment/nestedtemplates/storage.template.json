@@ -1,0 +1,111 @@
+﻿{
+  "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "storageName": {
+      "type": "string",
+      "minLength": 3,
+      "maxLength": 24,
+      "metadata": {
+        "description": "The name to use for resources within the resource group"
+      }
+    },
+    "storageSku": {
+      "type": "string",
+      "defaultValue": "Standard_LRS",
+      "allowedValues": [
+        "Standard_LRS",
+        "Standard_ZRS",
+        "Standard_GRS",
+        "Standard_RAGRS"
+      ],
+      "metadata": {
+        "description": "Defines the type of storage account to use for the data lake store"
+      }
+    }
+  },
+  "variables": {
+    "storageAccountApiVersion": "[utils.apiVersion('Microsoft.Storage', 'storageAccounts')]",
+    "storageAccountName": "[parameters('storageName')]",
+    "storageAccountResourceId": "[resourceId('Microsoft.Storage/storageAccounts', variables('storageAccountName'))]"
+  },
+  "functions": [
+    {
+      "namespace": "utils",
+      "members": {
+        "apiVersion": {
+          "parameters": [
+            {
+              "name": "providerNamespace",
+              "type": "string"
+            },
+            {
+              "name": "resourceType",
+              "type": "string"
+            }
+          ],
+          "output": {
+            "type": "string",
+            "value": "[providers(parameters('providerNamespace'), parameters('resourceType')).apiVersions[0]]"
+          }
+        },
+        "uniqueName": {
+          "parameters": [
+            {
+              "name": "resourcePrefix",
+              "type": "string"
+            },
+            {
+              "name": "resourceSuffix",
+              "type": "string"
+            }
+          ],
+          "output": {
+            "type": "string",
+            "value": "[concat(parameters('resourcePrefix'), uniqueString(resourceGroup().id), parameters('resourceSuffix'))]"
+          }
+        }
+      }
+    }
+  ],
+  "resources": [
+    {
+      "type": "Microsoft.Storage/storageAccounts",
+      "apiVersion": "[variables('storageAccountApiVersion')]",
+      "location": "[resourceGroup().location]",
+      "name": "[variables('storageAccountName')]",
+      "kind": "StorageV2",
+      "sku": {
+        "name": "[parameters('storageSku')]"
+      },
+      "properties": {
+        "encryption": {
+          "keySource": "Microsoft.Storage",
+          "services": {
+            "blob": {
+              "enabled": true
+            },
+            "file": {
+              "enabled": true
+            },
+            "table": {
+              "enabled": true
+            }
+          }
+        },
+        "isHnsEnabled": false,
+        "supportsHttpsTrafficOnly": true
+      }
+    }
+  ],
+  "outputs": {
+    "storageAccountName": {
+      "type": "string",
+      "value": "[variables('storageAccountName')]"
+    },
+    "storageAccountKey": {
+      "type": "string",
+      "value": "[listKeys(variables('storageAccountResourceId'), variables('storageAccountApiVersion')).keys[0].value]"
+    }
+  }
+}

@@ -1,0 +1,36 @@
+﻿{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "baseAppName": {
+      "value": "fixit"
+    },
+    "appName": {
+      "value": "fms"
+    },
+    "functionSku": {
+      "value": "Y1"
+    },
+    "functionTier": {
+      "value": "Dynamic"
+    },
+    "environment": {
+      "value": "stage"
+    },
+    "eventGridTopicName": {
+      "value": "fixit-stage-fms-top"
+    },
+    "eventGridSubscriptionName": {
+      "value": "fixit-stage-fms-sub"
+    },
+    "storageEndpointSuffix": {
+      "value": "core.windows.net"
+    },
+    "storageSku": {
+      "value": "Standard_GRS"
+    },
+    "webAppSku": {
+      "value": "B1"
+    }
+  }
+}

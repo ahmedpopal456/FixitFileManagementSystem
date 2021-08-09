@@ -1,0 +1,107 @@
+trigger:
+  branches:
+    include:
+      - master
+      - development
+
+variables:
+
+  # Solution Variables
+  buildPlatform: 'x64'
+  buildProjects: '**/Fixit*.csproj'
+  publishFileManagement: '**\Fixit.FileManagement.WebApi.csproj'
+  publishFileTriggers: '**\Fixit.FileManagement.Triggers.csproj'
+
+
+  buildConfiguration: 'Release'
+  fileManagerSolution: '**/Fixit.FileManagement.sln'
+
+  # Version Handling Variables
+  majorProductVersion: 1   
+  minorProductVersion: 0    
+  majorMinorProductVersion: $(majorProductVersion).$(minorProductVersion).0
+  patchProductVersion: $[counter(variables['majorMinorProductVersion'], 0)]
+  buildProductVersion: 0
+  buildFullVersion: $(majorProductVersion).$(minorProductVersion).$(patchProductVersion).$(buildProductVersion)
+ 
+  # Artifact Drop Folder
+  artifactName: 'drop'
+
+# Set Build Name
+name: $(majorProductVersion).$(minorProductVersion).$(patchProductVersion).$(buildProductVersion)
+
+jobs:
+
+- job: Fixit_FileManagementSystem_Build_Test_and_Publish
+  
+  # Set Docker
+  pool:
+    vmImage: 'windows-2019'
+    displayName: Run Main Build and Test Pipeline
+
+  steps:
+
+    # Restore, Build and Package
+  - task: NuGetToolInstaller@0
+    displayName: 'Use NuGet 4.4.1'
+    inputs:
+      versionSpec: 4.4.1
+
+  - task: UseDotNet@2
+    inputs:
+      packageType: 'sdk'
+      version: '3.1.102'
+      
+  - task: DotNetCoreCLI@2
+    displayName: Restore
+    inputs:
+      command: restore
+      projects: '$(buildProjects)'
+      feedsToUse: 'select'
+      vstsFeed: 'Fixit'
+      includeNuGetOrg: true
+      nobuild: true
+
+  - task: DotNetCoreCLI@2
+    displayName: Build
+    inputs:
+      projects: '$(buildProjects)'
+      arguments: '--configuration $(buildConfiguration) --no-restore'
+
+  - task: DotNetCoreCLI@2
+    displayName: Publish Fixit FMS Functions
+    inputs:
+      command: publish
+      publishWebProjects: false
+      projects: '$(publishFileTriggers)'
+      arguments: '--configuration $(buildConfiguration) --output $(build.artifactstagingdirectory) --no-restore'
+      zipAfterPublish: true
+      
+  - task: DotNetCoreCLI@2
+    displayName: Publish Fixit FMS Binaries
+    inputs:
+      command: publish
+      publishWebProjects: false
+      projects: '$(publishFileManagement)'
+      arguments: '--configuration $(buildConfiguration) --output $(build.artifactstagingdirectory) --no-restore'
+      zipAfterPublish: false
+      
+  - task: CopyFiles@2
+    displayName: 'Copy ArmDeployment'
+    inputs:  
+      SourceFolder: '$(System.DefaultWorkingDirectory)\ArmDeployment'
+      TargetFolder: '$(Build.ArtifactStagingDirectory)\ArmDeployment'
+    
+    # Publish PDBs
+  - task: PublishSymbols@2
+    displayName: 'Publish symbols path'
+    inputs:
+      SearchPattern: '**\bin\**\*.pdb'
+      PublishSymbols: false
+    continueOnError: true
+      
+  - task: PublishBuildArtifacts@1
+    displayName: 'Publish Artifact'
+    inputs:
+      PathtoPublish: '$(build.artifactstagingdirectory)'
+      ArtifactName: 'drop' 

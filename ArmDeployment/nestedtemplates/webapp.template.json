@@ -1,0 +1,51 @@
+﻿{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "webAppServiceName": {
+      "type": "string"
+    },
+    "webAppServicePlanName": {
+      "type": "string"
+    },
+    "sku":{
+      "type": "string",
+      "defaultValue" : "S1",
+      "metadata": {
+        "description": "The SKU of App Service Plan, by default is Standard S1"
+      }
+    }
+  },
+  "variables": {},
+  "resources": [
+    {
+      "type": "Microsoft.Web/serverfarms",
+      "apiVersion": "2015-08-01",
+      "name": "[parameters('webAppServicePlanName')]",
+      "location": "[resourceGroup().location]",
+      "kind": "app",
+      "sku": {
+        "name": "[parameters('sku')]"
+      }
+    },
+    {
+      "type": "Microsoft.Web/sites",
+      "apiVersion": "2016-08-01",
+      "name": "[parameters('webAppServiceName')]",
+      "location": "[resourceGroup().location]",
+      "dependsOn": [
+        "[resourceId('Microsoft.Web/serverfarms', parameters('webAppServicePlanName'))]"
+      ],
+      "properties": {
+        "httpsOnly": true,
+        "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', parameters('webAppServicePlanName'))]"
+      }
+    }
+  ],
+  "outputs": {
+    "webAppServiceResourceId": {
+      "type": "string",
+      "value": "[resourceId('Microsoft.Web/serverfarms', parameters('webAppServiceName'))]"
+    }
+  }
+}
