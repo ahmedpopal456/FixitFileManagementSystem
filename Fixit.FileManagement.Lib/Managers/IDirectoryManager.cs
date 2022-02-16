@@ -16,7 +16,7 @@ namespace Fixit.FileManagement.Lib.Managers
     /// <param name="directoryCreateRequestVm"></param>
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
-    Task<OperationStatus> CreateDirectoryAsync(string fileSystemName, long fileSystemId, DirectoryCreateRequestDto directoryCreateRequestVm, CancellationToken cancellationToken);
+    Task<OperationStatus> CreateDirectoryAsync(string fileSystemName, string fileSystemId, DirectoryCreateRequestDto directoryCreateRequestVm, CancellationToken cancellationToken);
     
     /// <summary>
     /// 
@@ -26,7 +26,7 @@ namespace Fixit.FileManagement.Lib.Managers
     /// <param name="iFolderPath"></param>
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
-    Task<OperationStatus> DeleteDirectoryAsync(string fileSystemName, long fileSystemId, string iFolderPath, CancellationToken cancellationToken);
+    Task<OperationStatus> DeleteDirectoryAsync(string fileSystemName, string fileSystemId, string iFolderPath, CancellationToken cancellationToken);
    
     /// <summary>
     /// 
@@ -37,7 +37,7 @@ namespace Fixit.FileManagement.Lib.Managers
     /// <param name="iIgnorePrefix"></param>
     /// <param name="iIncludeItems"></param>
     /// <returns></returns>
-    FileSystemDirectoryItemsDto GetDirectoryItems(string fileSystemName, long fileSystemId, string iFolderPath, bool iIgnorePrefix = false, bool iIncludeItems = true);
+    FileSystemDirectoryItemsDto GetDirectoryItems(string fileSystemName, string fileSystemId, string iFolderPath, bool iIgnorePrefix = false, bool iIncludeItems = true);
    
     /// <summary>
     /// 
@@ -49,7 +49,7 @@ namespace Fixit.FileManagement.Lib.Managers
     /// <param name="iIgnorePrefix"></param>
     /// <param name="iIncludeItems"></param>
     /// <returns></returns>
-    Task<FileSystemDirectoryItemsDto> GetDirectoryItemsAsync(string fileSystemName, long fileSystemId, string iFolderPath, CancellationToken cancellationToken, bool iIgnorePrefix = false, bool iIncludeItems = true);
+    Task<FileSystemDirectoryItemsDto> GetDirectoryItemsAsync(string fileSystemName, string fileSystemId, string iFolderPath, CancellationToken cancellationToken, bool iIgnorePrefix = false, bool iIncludeItems = true);
     
     /// <summary>
     /// 
@@ -59,7 +59,7 @@ namespace Fixit.FileManagement.Lib.Managers
     /// <param name="iIncludeItems"></param>
     /// <param name="singleLevel"></param>
     /// <returns></returns>
-    FileSystemRootDirectoryDto GetDirectoryStructure(string fileSystemName, long fileSystemId, string folderPath, bool iIncludeItems = false, bool singleLevel = false);
+    FileSystemRootDirectoryDto GetDirectoryStructure(string fileSystemName, string fileSystemId, string folderPath, bool iIncludeItems = false, bool singleLevel = false);
     
     /// <summary>
     /// 
@@ -70,7 +70,7 @@ namespace Fixit.FileManagement.Lib.Managers
     /// <param name="iIncludeItems"></param>
     /// <param name="singleLevel"></param>
     /// <returns></returns>
-    Task<FileSystemRootDirectoryDto> GetDirectoryStructureAsync(string fileSystemName, long fileSystemId, string folderPath, CancellationToken cancellationToken, bool iIncludeItems = false, bool singleLevel = false);
+    Task<FileSystemRootDirectoryDto> GetDirectoryStructureAsync(string fileSystemName, string fileSystemId, string folderPath, CancellationToken cancellationToken, bool iIncludeItems = false, bool singleLevel = false);
     
     /// <summary>
     /// 
@@ -80,6 +80,6 @@ namespace Fixit.FileManagement.Lib.Managers
     /// <param name="directoryRenameRequestVm"></param>
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
-    Task<OperationStatus> RenameDirectoryAsync(string fileSystemName, long fileSystemId, DirectoryRenameRequestDto directoryRenameRequestVm, CancellationToken cancellationToken);
+    Task<OperationStatus> RenameDirectoryAsync(string fileSystemName, string fileSystemId, DirectoryRenameRequestDto directoryRenameRequestVm, CancellationToken cancellationToken);
   }
 }

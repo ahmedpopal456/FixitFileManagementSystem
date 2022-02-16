@@ -20,7 +20,7 @@ namespace Fixit.FileManagement.Lib.Managers
     /// <param name="iFileId"></param>
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
-    Task<OperationStatus> DeleteFileAsync(string fileSystemName, long fileSystemId, Guid iFileId, CancellationToken cancellationToken);
+    Task<OperationStatus> DeleteFileAsync(string fileSystemName, string fileSystemId, Guid iFileId, CancellationToken cancellationToken);
 
     /// <summary>
     /// 
@@ -30,7 +30,7 @@ namespace Fixit.FileManagement.Lib.Managers
     /// <param name="iFileId"></param>
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
-    Task<FileDownloadResponseDto> DownloadFileAsync(string fileSystemName, long fileSystemId, Guid iFileId, CancellationToken cancellationToken);
+    Task<FileDownloadResponseDto> DownloadFileAsync(string fileSystemName, string fileSystemId, Guid iFileId, CancellationToken cancellationToken);
 
     /// <summary>
     /// 
@@ -40,7 +40,7 @@ namespace Fixit.FileManagement.Lib.Managers
     /// <param name="fileRequestDtos"></param>
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
-    Task<IEnumerable<FileDownloadResponseDto>> DownloadFilesAsync(string fileSystemName, long fileSystemId, IEnumerable<Guid> fileRequestDtos, CancellationToken cancellationToken);
+    Task<IEnumerable<FileDownloadResponseDto>> DownloadFilesAsync(string fileSystemName, string fileSystemId, IEnumerable<Guid> fileRequestDtos, CancellationToken cancellationToken);
     
     /// <summary>
     /// 
@@ -50,7 +50,7 @@ namespace Fixit.FileManagement.Lib.Managers
     /// <param name="iFileId"></param>
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
-    Task<FileStreamResult> GetFileAsync(string fileSystemName, long fileSystemId, Guid iFileId, CancellationToken cancellationToken);
+    Task<FileStreamResult> GetFileAsync(string fileSystemName, string fileSystemId, Guid iFileId, CancellationToken cancellationToken);
     
     /// <summary>
     /// 
@@ -60,7 +60,7 @@ namespace Fixit.FileManagement.Lib.Managers
     /// <param name="iFileId"></param>
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
-    Task<FileResponseDto> GetFileInfoAsync(string fileSystemName, long fileSystemId, Guid iFileId, CancellationToken cancellationToken);
+    Task<FileResponseDto> GetFileInfoAsync(string fileSystemName, string fileSystemId, Guid iFileId, CancellationToken cancellationToken);
     
     /// <summary>
     /// 
@@ -70,7 +70,7 @@ namespace Fixit.FileManagement.Lib.Managers
     /// <param name="fileIds"></param>
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
-    Task<IEnumerable<FileResponseDto>> GetFilesInfoAsync(string fileSystemName, long fileSystemId, IEnumerable<Guid> fileIds, CancellationToken cancellationToken);
+    Task<IEnumerable<FileResponseDto>> GetFilesInfoAsync(string fileSystemName, string fileSystemId, IEnumerable<Guid> fileIds, CancellationToken cancellationToken);
     
     /// <summary>
     /// 
@@ -81,7 +81,7 @@ namespace Fixit.FileManagement.Lib.Managers
     /// <param name="fileRenameRequestVm"></param>
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
-    Task<OperationStatus> RenameFileAsync(string fileSystemName, long fileSystemId, Guid iFileId, FileRenameRequestDto fileRenameRequestVm, CancellationToken cancellationToken);
+    Task<OperationStatus> RenameFileAsync(string fileSystemName, string fileSystemId, Guid iFileId, FileRenameRequestDto fileRenameRequestVm, CancellationToken cancellationToken);
     
     /// <summary>
     /// 
@@ -92,7 +92,7 @@ namespace Fixit.FileManagement.Lib.Managers
     /// <param name="fileMetadataSummary"></param>
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
-    Task<FileMetadataDto> SetFileMetadataAsync(string fileSystemName, long fileSystemId, Guid fileId, FileMetadataSummary fileMetadataSummary, CancellationToken cancellationToken);
+    Task<FileMetadataDto> SetFileMetadataAsync(string fileSystemName, string fileSystemId, Guid fileId, FileMetadataSummary fileMetadataSummary, CancellationToken cancellationToken);
     
     /// <summary>
     /// 
@@ -102,7 +102,7 @@ namespace Fixit.FileManagement.Lib.Managers
     /// <param name="fileUploadRequestVm"></param>
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
-    Task<FileUploadResponseDto> UploadFileAsync(string fileSystemName, long fileSystemId, FileUploadRequestDto fileUploadRequestVm, CancellationToken cancellationToken);
+    Task<FileUploadResponseDto> UploadFileAsync(string fileSystemName, string fileSystemId, FileUploadRequestDto fileUploadRequestVm, CancellationToken cancellationToken);
     
     /// <summary>
     /// 
@@ -112,7 +112,7 @@ namespace Fixit.FileManagement.Lib.Managers
     /// <param name="fileUploadsRequestVm"></param>
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
-    Task<IEnumerable<FileUploadResponseDto>> UploadFilesAsync(string fileSystemName, long fileSystemId, MultiFileUploadRequestDto fileUploadsRequestVm, CancellationToken cancellationToken);
+    Task<IEnumerable<FileUploadResponseDto>> UploadFilesAsync(string fileSystemName, string fileSystemId, MultiFileUploadRequestDto fileUploadsRequestVm, CancellationToken cancellationToken);
 
     /// <summary>
     /// 

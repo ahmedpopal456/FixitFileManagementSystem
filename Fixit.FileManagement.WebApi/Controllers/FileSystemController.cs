@@ -32,7 +32,7 @@ namespace Fixit.FileManagement.WebApi.Controllers
     }    
 
     [HttpGet("{name}/{id}")]
-    public async Task<IActionResult> GetFileSystemStructureAsync([FromRoute] string name, [FromRoute] long id,[FromHeader] string folderPath, CancellationToken cancellationToken, bool includeItems, bool singleLevel)
+    public async Task<IActionResult> GetFileSystemStructureAsync([FromRoute] string name, [FromRoute] string id,[FromHeader] string folderPath, CancellationToken cancellationToken, bool includeItems, bool singleLevel)
     {
       cancellationToken.ThrowIfCancellationRequested();
       if (string.IsNullOrWhiteSpace(name))
@@ -59,7 +59,7 @@ namespace Fixit.FileManagement.WebApi.Controllers
     }
 
     [HttpPost("{name}/{id}")]
-    public async Task<IActionResult> CreateFileSystemAsync([FromRoute] string name, [FromRoute] long id, CancellationToken cancellationToken)
+    public async Task<IActionResult> CreateFileSystemAsync([FromRoute] string name, [FromRoute] string id, CancellationToken cancellationToken)
     {
       cancellationToken.ThrowIfCancellationRequested();
 
@@ -79,7 +79,7 @@ namespace Fixit.FileManagement.WebApi.Controllers
     }
 
     [HttpDelete("{name}/{id}")]
-    public async Task<IActionResult> DeleteFileSystemAsync([FromRoute] string name, [FromRoute] long id, CancellationToken cancellationToken)
+    public async Task<IActionResult> DeleteFileSystemAsync([FromRoute] string name, [FromRoute] string id, CancellationToken cancellationToken)
     {
       cancellationToken.ThrowIfCancellationRequested();
 
@@ -99,7 +99,7 @@ namespace Fixit.FileManagement.WebApi.Controllers
     }
 
     [HttpGet("{name}/{id}/Files/{fileId}")]
-    public async Task<IActionResult> GetFileInfoAsync([FromRoute] string name, [FromRoute] long id, [FromRoute] string fileId, CancellationToken cancellationToken)
+    public async Task<IActionResult> GetFileInfoAsync([FromRoute] string name, [FromRoute] string id, [FromRoute] string fileId, CancellationToken cancellationToken)
     {
       cancellationToken.ThrowIfCancellationRequested();
 
@@ -118,7 +118,7 @@ namespace Fixit.FileManagement.WebApi.Controllers
     }
 
     [HttpGet("{name}/{id}/Files/Download")]
-    public async Task<IActionResult> DownloadFilesAsync([FromRoute] string name, [FromRoute] long id, [FromHeader] IEnumerable<Guid> fileIds, CancellationToken cancellationToken)
+    public async Task<IActionResult> DownloadFilesAsync([FromRoute] string name, [FromRoute] string id, [FromHeader] IEnumerable<Guid> fileIds, CancellationToken cancellationToken)
     {
       cancellationToken.ThrowIfCancellationRequested();
 
@@ -137,7 +137,7 @@ namespace Fixit.FileManagement.WebApi.Controllers
     }
 
     [HttpGet("{name}/{id}/Files")]
-    public async Task<IActionResult> GetFilesInfo([FromRoute] string name, [FromRoute] long id, [FromHeader] IEnumerable<Guid> fileIds, CancellationToken cancellationToken)
+    public async Task<IActionResult> GetFilesInfo([FromRoute] string name, [FromRoute] string id, [FromHeader] IEnumerable<Guid> fileIds, CancellationToken cancellationToken)
     {
       cancellationToken.ThrowIfCancellationRequested();
 
@@ -156,7 +156,7 @@ namespace Fixit.FileManagement.WebApi.Controllers
     }
 
     [HttpGet("{name}/{id}/Files/{fileId}/Download")]
-    public async Task<IActionResult> DownloadFileAsync([FromRoute] string name, [FromRoute] long id, [FromRoute] string fileId, CancellationToken cancellationToken)
+    public async Task<IActionResult> DownloadFileAsync([FromRoute] string name, [FromRoute] string id, [FromRoute] string fileId, CancellationToken cancellationToken)
     {
       cancellationToken.ThrowIfCancellationRequested();
 
@@ -175,7 +175,7 @@ namespace Fixit.FileManagement.WebApi.Controllers
     }
 
     [HttpPost("{name}/{id}/Files/Upload"), DisableRequestSizeLimit]
-    public async Task<IActionResult> UploadFileAsync([FromRoute] string name, [FromRoute] long id, [FromForm] FileUploadRequestDto fileUploadRequestDto, CancellationToken cancellationToken)
+    public async Task<IActionResult> UploadFileAsync([FromRoute] string name, [FromRoute] string id, [FromForm] FileUploadRequestDto fileUploadRequestDto, CancellationToken cancellationToken)
     {
       cancellationToken.ThrowIfCancellationRequested();
 
@@ -195,7 +195,7 @@ namespace Fixit.FileManagement.WebApi.Controllers
     }
 
     [HttpPost("{name}/{id}/Files/Uploads"), DisableRequestSizeLimit]
-    public async Task<IActionResult> UploadFilesAsync([FromRoute] string name, [FromRoute] long id, [FromForm] MultiFileUploadRequestDto multiFileUploadsRequestDto, CancellationToken cancellationToken)
+    public async Task<IActionResult> UploadFilesAsync([FromRoute] string name, [FromRoute] string id, [FromForm] MultiFileUploadRequestDto multiFileUploadsRequestDto, CancellationToken cancellationToken)
     {
       cancellationToken.ThrowIfCancellationRequested();
 
@@ -214,7 +214,7 @@ namespace Fixit.FileManagement.WebApi.Controllers
     }
 
     [HttpPut("{name}/{id}/Files/{fileId}/Rename")]
-    public async Task<IActionResult> RenameFileAsync([FromRoute] string name, [FromRoute] long id, [FromRoute] string fileId, [FromBody] FileRenameRequestDto fileRenameRequestDto, CancellationToken cancellationToken)
+    public async Task<IActionResult> RenameFileAsync([FromRoute] string name, [FromRoute] string id, [FromRoute] string fileId, [FromBody] FileRenameRequestDto fileRenameRequestDto, CancellationToken cancellationToken)
     {
       cancellationToken.ThrowIfCancellationRequested();
 
@@ -238,7 +238,7 @@ namespace Fixit.FileManagement.WebApi.Controllers
     }
 
     [HttpPut("{name}/{id}/Files/{fileId}/Metadata")]
-    public async Task<IActionResult> UpdateFileMetadaAsync([FromRoute] string name, [FromRoute] long id, [FromRoute] string fileId, [FromBody] FileMetadataSummary fileMetadataSummary, CancellationToken cancellationToken)
+    public async Task<IActionResult> UpdateFileMetadaAsync([FromRoute] string name, [FromRoute] string id, [FromRoute] string fileId, [FromBody] FileMetadataSummary fileMetadataSummary, CancellationToken cancellationToken)
     {
       cancellationToken.ThrowIfCancellationRequested();
 
@@ -262,7 +262,7 @@ namespace Fixit.FileManagement.WebApi.Controllers
     }
 
     [HttpDelete("{name}/{id}/Files/{fileId}/Delete")]
-    public async Task<IActionResult> DeleteFileAsync([FromRoute] string name, [FromRoute] long id, [FromRoute] string fileId, CancellationToken cancellationToken)
+    public async Task<IActionResult> DeleteFileAsync([FromRoute] string name, [FromRoute] string id, [FromRoute] string fileId, CancellationToken cancellationToken)
     {
       cancellationToken.ThrowIfCancellationRequested();
 
@@ -281,7 +281,7 @@ namespace Fixit.FileManagement.WebApi.Controllers
     }
 
     [HttpPut("{name}/{id}/Folders/Rename")]
-    public async Task<IActionResult> RenameDirectoryAsync([FromRoute] string name, [FromRoute] long id, [FromBody] DirectoryRenameRequestDto directoryRenameRequestDto, CancellationToken cancellationToken)
+    public async Task<IActionResult> RenameDirectoryAsync([FromRoute] string name, [FromRoute] string id, [FromBody] DirectoryRenameRequestDto directoryRenameRequestDto, CancellationToken cancellationToken)
     {
       cancellationToken.ThrowIfCancellationRequested();
 
@@ -300,7 +300,7 @@ namespace Fixit.FileManagement.WebApi.Controllers
     }
 
     [HttpDelete("{name}/{id}/Folders/Delete")]
-    public async Task<IActionResult> DeleteDirectoryAsync([FromRoute] string name, [FromRoute] long id, [FromHeader] string folderPath, CancellationToken cancellationToken)
+    public async Task<IActionResult> DeleteDirectoryAsync([FromRoute] string name, [FromRoute] string id, [FromHeader] string folderPath, CancellationToken cancellationToken)
     {
       cancellationToken.ThrowIfCancellationRequested();
 
@@ -320,7 +320,7 @@ namespace Fixit.FileManagement.WebApi.Controllers
     }
 
     [HttpPost("{name}/{id}/Folders/Create")]
-    public async Task<IActionResult> CreateFolderAsync([FromRoute] string name, [FromRoute] long id, [FromBody] DirectoryCreateRequestDto directoryCreateRequestDto, CancellationToken cancellationToken)
+    public async Task<IActionResult> CreateFolderAsync([FromRoute] string name, [FromRoute] string id, [FromBody] DirectoryCreateRequestDto directoryCreateRequestDto, CancellationToken cancellationToken)
     {
       cancellationToken.ThrowIfCancellationRequested();
 
@@ -338,7 +338,7 @@ namespace Fixit.FileManagement.WebApi.Controllers
     }
   
     [HttpGet("{name}/{id}/Folders/Get")]
-    public async Task<IActionResult> GetDirectoryAsync([FromRoute] string name, [FromRoute] long id, [FromHeader] string folderPath, CancellationToken cancellationToken)
+    public async Task<IActionResult> GetDirectoryAsync([FromRoute] string name, [FromRoute] string id, [FromHeader] string folderPath, CancellationToken cancellationToken)
     {
       cancellationToken.ThrowIfCancellationRequested();
 

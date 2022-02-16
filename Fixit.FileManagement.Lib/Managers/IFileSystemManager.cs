@@ -17,7 +17,7 @@ namespace Fixit.FileManagement.Lib.Managers
     /// <param name="fileSystemId"></param>
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
-    Task<FileSystemCreate> CreateOrGetFileSystemAsync(string fileSystemName, long fileSystemId, CancellationToken cancellationToken);
+    Task<FileSystemCreate> CreateOrGetFileSystemAsync(string fileSystemName, string fileSystemId, CancellationToken cancellationToken);
 
     /// <summary>
     /// 
@@ -26,7 +26,7 @@ namespace Fixit.FileManagement.Lib.Managers
     /// <param name="fileSystemId"></param>
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
-    Task<OperationStatus> DeleteFileSystemAsync(string fileSystemName, long fileSystemId, CancellationToken cancellationToken);
+    Task<OperationStatus> DeleteFileSystemAsync(string fileSystemName, string fileSystemId, CancellationToken cancellationToken);
 
     /// <summary>
     /// Get the Table storage dans the File system client
@@ -35,7 +35,7 @@ namespace Fixit.FileManagement.Lib.Managers
     /// <param name="fileSystemName">File system name</param>
     /// <param name="tableEntity">The table storage</param>
     /// <param name="fileSystemClient">The file system client</param>
-    void GetTableEntityAndFileSystemClient(long fileSystemId, string fileSystemName, out ITableStorage tableEntity, out IFileSystemClient fileSystemClient);
+    void GetTableEntityAndFileSystemClient(string fileSystemId, string fileSystemName, out ITableStorage tableEntity, out IFileSystemClient fileSystemClient);
 
     /// <summary>
     /// Regenerate and file url while making sure the FileSystem exist
@@ -47,6 +47,6 @@ namespace Fixit.FileManagement.Lib.Managers
     /// <param name="cancellationToken">Cancellation Token</param>
     /// <param name="url">The url</param>
     /// <returns></returns>
-    Task<ImageUrlDto> GenerateImageUrlAsync(string entityName, long entityId, string fileId, int? expirationTime, CancellationToken cancellationToken, string url = null);
+    Task<ImageUrlDto> GenerateImageUrlAsync(string entityName, string entityId, string fileId, int? expirationTime, CancellationToken cancellationToken, string url = null);
   }
 }

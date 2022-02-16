@@ -40,7 +40,7 @@ namespace Fixit.FileManagement.Lib.Managers.Internal
     }
 
     #region Create File Systems
-    public async Task<FileSystemCreate> CreateOrGetFileSystemAsync(string fileSystemName, long fileSystemId, CancellationToken cancellationToken)
+    public async Task<FileSystemCreate> CreateOrGetFileSystemAsync(string fileSystemName, string fileSystemId, CancellationToken cancellationToken)
     {
       cancellationToken.ThrowIfCancellationRequested();
       _ = string.IsNullOrWhiteSpace(fileSystemName) ? throw new ArgumentNullException(nameof(fileSystemName)) : string.Empty;     
@@ -69,7 +69,7 @@ namespace Fixit.FileManagement.Lib.Managers.Internal
     #endregion
 
     #region Delete File Systems
-    public async Task<OperationStatus> DeleteFileSystemAsync(string fileSystemName, long fileSystemId, CancellationToken cancellationToken)
+    public async Task<OperationStatus> DeleteFileSystemAsync(string fileSystemName, string fileSystemId, CancellationToken cancellationToken)
     {
       cancellationToken.ThrowIfCancellationRequested();
       _ = string.IsNullOrWhiteSpace(fileSystemName) ? throw new ArgumentNullException(nameof(fileSystemName)) : string.Empty;
@@ -91,7 +91,7 @@ namespace Fixit.FileManagement.Lib.Managers.Internal
     }
     #endregion
 
-    public void GetTableEntityAndFileSystemClient(long fileSystemId, string fileSystemName, out ITableStorage tableEntity, out IFileSystemClient fileSystemClient)
+    public void GetTableEntityAndFileSystemClient(string fileSystemId, string fileSystemName, out ITableStorage tableEntity, out IFileSystemClient fileSystemClient)
     {
       ITableStorage table = default;
       IFileSystemClient client = default;
@@ -107,7 +107,7 @@ namespace Fixit.FileManagement.Lib.Managers.Internal
       fileSystemClient = client;
     }
 
-    public async Task<ImageUrlDto> GenerateImageUrlAsync(string entityName, long entityId, string fileId, int? expirationTime, CancellationToken cancellationToken, string url = null)
+    public async Task<ImageUrlDto> GenerateImageUrlAsync(string entityName, string entityId, string fileId, int? expirationTime, CancellationToken cancellationToken, string url = null)
     {
       var result = default(ImageUrlDto);
 

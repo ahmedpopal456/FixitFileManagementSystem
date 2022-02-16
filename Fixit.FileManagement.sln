@@ -11,8 +11,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Fixit.FileManagement.Trigge
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Fixit.FileManagement.Lib", "Fixit.FileManagement.Lib\Fixit.FileManagement.Lib.csproj", "{F9305516-77F8-4D92-A135-3D96E08AD0F8}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Fixit.Core.DataContracts", "..\FixitCoreDataContracts\Fixit.Core.DataContracts\Fixit.Core.DataContracts.csproj", "{71FC9AC2-C64C-4F63-9A2B-DE2870034833}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -35,10 +33,6 @@ Global
 		{F9305516-77F8-4D92-A135-3D96E08AD0F8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F9305516-77F8-4D92-A135-3D96E08AD0F8}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F9305516-77F8-4D92-A135-3D96E08AD0F8}.Release|Any CPU.Build.0 = Release|Any CPU
-		{71FC9AC2-C64C-4F63-9A2B-DE2870034833}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{71FC9AC2-C64C-4F63-9A2B-DE2870034833}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{71FC9AC2-C64C-4F63-9A2B-DE2870034833}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{71FC9AC2-C64C-4F63-9A2B-DE2870034833}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

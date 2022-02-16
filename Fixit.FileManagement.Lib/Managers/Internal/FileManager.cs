@@ -81,7 +81,7 @@ namespace Fixit.FileManagement.Lib.Managers.Internal
     }
 
     #region Get File
-    public async Task<FileStreamResult> GetFileAsync(string fileSystemName, long fileSystemId, Guid fileId, CancellationToken cancellationToken)
+    public async Task<FileStreamResult> GetFileAsync(string fileSystemName, string fileSystemId, Guid fileId, CancellationToken cancellationToken)
     {
       cancellationToken.ThrowIfCancellationRequested();
       _ = string.IsNullOrWhiteSpace(fileSystemName) ? throw new ArgumentNullException($"expects the {nameof(fileSystemName)} to be defined") : string.Empty;
@@ -117,7 +117,7 @@ namespace Fixit.FileManagement.Lib.Managers.Internal
     #endregion
 
     #region Get File Info
-    public async Task<FileResponseDto> GetFileInfoAsync(string fileSystemName, long fileSystemId, Guid fileId, CancellationToken cancellationToken)
+    public async Task<FileResponseDto> GetFileInfoAsync(string fileSystemName, string fileSystemId, Guid fileId, CancellationToken cancellationToken)
     {
       cancellationToken.ThrowIfCancellationRequested();
       _ = string.IsNullOrWhiteSpace(fileSystemName) ? throw new ArgumentNullException($"expects the {nameof(fileSystemName)} to be defined") : string.Empty;
@@ -147,7 +147,7 @@ namespace Fixit.FileManagement.Lib.Managers.Internal
       return result;
     }
 
-    public async Task<IEnumerable<FileResponseDto>> GetFilesInfoAsync(string fileSystemName, long fileSystemId, IEnumerable<Guid> fileIds, CancellationToken cancellationToken)
+    public async Task<IEnumerable<FileResponseDto>> GetFilesInfoAsync(string fileSystemName, string fileSystemId, IEnumerable<Guid> fileIds, CancellationToken cancellationToken)
     {
       cancellationToken.ThrowIfCancellationRequested();
       _ = string.IsNullOrWhiteSpace(fileSystemName) ? throw new ArgumentNullException($"expects the {nameof(fileSystemName)} to be defined") : string.Empty;
@@ -184,7 +184,7 @@ namespace Fixit.FileManagement.Lib.Managers.Internal
     #endregion
 
     #region Download Files
-    public async Task<FileDownloadResponseDto> DownloadFileAsync(string fileSystemName, long fileSystemId, Guid fileId, CancellationToken cancellationToken)
+    public async Task<FileDownloadResponseDto> DownloadFileAsync(string fileSystemName, string fileSystemId, Guid fileId, CancellationToken cancellationToken)
     {
       cancellationToken.ThrowIfCancellationRequested();
       _ = string.IsNullOrWhiteSpace(fileSystemName) ? throw new ArgumentNullException($"expects the {nameof(fileSystemName)} to be defined") : string.Empty;
@@ -219,7 +219,7 @@ namespace Fixit.FileManagement.Lib.Managers.Internal
       return result;
     }
 
-    public async Task<IEnumerable<FileDownloadResponseDto>> DownloadFilesAsync(string fileSystemName, long fileSystemId, IEnumerable<Guid> fileRequestDtos, CancellationToken cancellationToken)
+    public async Task<IEnumerable<FileDownloadResponseDto>> DownloadFilesAsync(string fileSystemName, string fileSystemId, IEnumerable<Guid> fileRequestDtos, CancellationToken cancellationToken)
     {
       cancellationToken.ThrowIfCancellationRequested();
       _ = string.IsNullOrWhiteSpace(fileSystemName) ? throw new ArgumentNullException($"expects the {nameof(fileSystemName)} to be defined") : string.Empty;
@@ -268,7 +268,7 @@ namespace Fixit.FileManagement.Lib.Managers.Internal
 
     #region Upload Files
 
-    public async Task<FileUploadResponseDto> UploadFileAsync(string fileSystemName, long fileSystemId, FileUploadRequestDto fileUploadRequestDto, CancellationToken cancellationToken)
+    public async Task<FileUploadResponseDto> UploadFileAsync(string fileSystemName, string fileSystemId, FileUploadRequestDto fileUploadRequestDto, CancellationToken cancellationToken)
     {
       cancellationToken.ThrowIfCancellationRequested();
       _ = string.IsNullOrWhiteSpace(fileSystemName) ? throw new ArgumentNullException($"expects the {nameof(fileSystemName)} to be defined") : string.Empty;
@@ -339,7 +339,7 @@ namespace Fixit.FileManagement.Lib.Managers.Internal
       return result;
     }
 
-    public async Task<IEnumerable<FileUploadResponseDto>> UploadFilesAsync(string fileSystemName, long fileSystemId, MultiFileUploadRequestDto fileUploadsRequestDto, CancellationToken cancellationToken)
+    public async Task<IEnumerable<FileUploadResponseDto>> UploadFilesAsync(string fileSystemName, string fileSystemId, MultiFileUploadRequestDto fileUploadsRequestDto, CancellationToken cancellationToken)
     {
       cancellationToken.ThrowIfCancellationRequested();
       _ = string.IsNullOrWhiteSpace(fileSystemName) ? throw new ArgumentNullException($"expects the {nameof(fileSystemName)} to be defined") : string.Empty;
@@ -425,7 +425,7 @@ namespace Fixit.FileManagement.Lib.Managers.Internal
 
     #region Renaming Files
 
-    public async Task<OperationStatus> RenameFileAsync(string fileSystemName, long fileSystemId, Guid fileId, FileRenameRequestDto fileRenameRequestDto, CancellationToken cancellationToken)
+    public async Task<OperationStatus> RenameFileAsync(string fileSystemName, string fileSystemId, Guid fileId, FileRenameRequestDto fileRenameRequestDto, CancellationToken cancellationToken)
     {
       cancellationToken.ThrowIfCancellationRequested();
       _ = string.IsNullOrWhiteSpace(fileSystemName) ? throw new ArgumentNullException($"expects the {nameof(fileSystemName)} to be defined") : string.Empty;
@@ -487,7 +487,7 @@ namespace Fixit.FileManagement.Lib.Managers.Internal
 
     #region Deleting Files
 
-    public async Task<OperationStatus> DeleteFileAsync(string fileSystemName, long fileSystemId, Guid fileId, CancellationToken cancellationToken)
+    public async Task<OperationStatus> DeleteFileAsync(string fileSystemName, string fileSystemId, Guid fileId, CancellationToken cancellationToken)
     {
       cancellationToken.ThrowIfCancellationRequested();
       _ = string.IsNullOrWhiteSpace(fileSystemName) ? throw new ArgumentNullException($"expects the {nameof(fileSystemName)} to be defined") : string.Empty;
@@ -504,7 +504,7 @@ namespace Fixit.FileManagement.Lib.Managers.Internal
         {
           var filePath = string.IsNullOrWhiteSpace(tableEntity.FolderPath) ? $"{fileSystemId.ToString()}/{tableEntity.FileName}" : $"{fileSystemId.ToString()}/{tableEntity.FolderPath}/{tableEntity.FileName}";
 
-          result = await table.DeleteEntityIfExistsAsync(tableEntity, cancellationToken);
+          result = await table.DeleteEntityIfExistsAsync<TableFileEntity>(tableEntity.PartitionKey, tableEntity.RowKey, cancellationToken);
 
           if (result.IsOperationSuccessful)
           {
@@ -520,7 +520,7 @@ namespace Fixit.FileManagement.Lib.Managers.Internal
 
     #region Update Files
 
-    public async Task<FileMetadataDto> SetFileMetadataAsync(string fileSystemName, long fileSystemId, Guid fileId, FileMetadataSummary fileMetadataSummary, CancellationToken cancellationToken)
+    public async Task<FileMetadataDto> SetFileMetadataAsync(string fileSystemName, string fileSystemId, Guid fileId, FileMetadataSummary fileMetadataSummary, CancellationToken cancellationToken)
     {
       cancellationToken.ThrowIfCancellationRequested();
       _ = string.IsNullOrWhiteSpace(fileSystemName) ? throw new ArgumentNullException($"expects the {nameof(fileSystemName)} to be defined") : string.Empty;
@@ -626,7 +626,7 @@ namespace Fixit.FileManagement.Lib.Managers.Internal
 
     #region Helpers
 
-    private async Task<FileResponseDto> GetFileResponseAsync(long fileSystemId, TableFileEntity tableEntity, IFileSystemClient fileSystemClient, CancellationToken cancellationToken)
+    private async Task<FileResponseDto> GetFileResponseAsync(string fileSystemId, TableFileEntity tableEntity, IFileSystemClient fileSystemClient, CancellationToken cancellationToken)
     {
       var filePath = $"{fileSystemId.ToString()}/{tableEntity.FolderPath}/{tableEntity.FileName}";
 

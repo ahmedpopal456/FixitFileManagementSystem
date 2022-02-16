@@ -10,12 +10,8 @@
   </ItemGroup>
   
   <ItemGroup>
-    <PackageReference Include="Fixit.Core.Storage" Version="1.0.0-1448-50" />
+    <PackageReference Include="Fixit.Core.Storage" Version="1.0.37-alpha" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Core" Version="2.2.5" />
-  </ItemGroup>
-  
-  <ItemGroup>
-    <ProjectReference Include="..\..\FixitCoreDataContracts\Fixit.Core.DataContracts\Fixit.Core.DataContracts.csproj" />
   </ItemGroup>
 
 </Project>

@@ -15,6 +15,7 @@ using Fixit.Core.Storage.DataContracts.FileSystem.EventDefinitions;
 using Fixit.Core.Storage.DataContracts.FileSystem.Events;
 using Fixit.Core.Storage.DataContracts.FileSystem.Files;
 using Fixit.Core.Storage.FileSystem.Constants;
+using Fixit.Core.Storage.DataContracts.TableEntities;
 
 [assembly: InternalsVisibleTo("Fixit.FileeManagement.WebApi.UnitTests")]
 namespace Fixit.FileManagement.Lib.Managers.Internal
@@ -37,7 +38,7 @@ namespace Fixit.FileManagement.Lib.Managers.Internal
 
     #region Creating Directories
 
-    public async Task<OperationStatus> CreateDirectoryAsync(string fileSystemName, long fileSystemId, DirectoryCreateRequestDto directoryCreateRequestDto, CancellationToken cancellationToken)
+    public async Task<OperationStatus> CreateDirectoryAsync(string fileSystemName, string fileSystemId, DirectoryCreateRequestDto directoryCreateRequestDto, CancellationToken cancellationToken)
     {
       cancellationToken.ThrowIfCancellationRequested();
       _ = string.IsNullOrWhiteSpace(fileSystemName) ? throw new ArgumentNullException($"expects the {nameof(fileSystemName)} to be defined") : string.Empty;
@@ -59,7 +60,7 @@ namespace Fixit.FileManagement.Lib.Managers.Internal
 
     #region Deleting Directories
 
-    public async Task<OperationStatus> DeleteDirectoryAsync(string fileSystemName, long fileSystemId, string folderPath, CancellationToken cancellationToken)
+    public async Task<OperationStatus> DeleteDirectoryAsync(string fileSystemName, string fileSystemId, string folderPath, CancellationToken cancellationToken)
     {
       cancellationToken.ThrowIfCancellationRequested();
       _ = string.IsNullOrWhiteSpace(fileSystemName) ? throw new ArgumentNullException($"expects the {nameof(fileSystemName)} to be defined") : string.Empty;
@@ -83,7 +84,7 @@ namespace Fixit.FileManagement.Lib.Managers.Internal
 
             if (tableFileEntity != null)
             {
-              await table.DeleteEntityIfExistsAsync(tableFileEntity, cancellationToken);
+              await table.DeleteEntityIfExistsAsync<TableFileEntity>(tableFileEntity.PartitionKey, tableFileEntity.RowKey, cancellationToken);
             }
           }
           enumerator.Dispose();
@@ -97,7 +98,7 @@ namespace Fixit.FileManagement.Lib.Managers.Internal
 
     #region Renaming Directories
 
-    public async Task<OperationStatus> RenameDirectoryAsync(string fileSystemName, long fileSystemId, DirectoryRenameRequestDto directoryRenameRequestDto, CancellationToken cancellationToken)
+    public async Task<OperationStatus> RenameDirectoryAsync(string fileSystemName, string fileSystemId, DirectoryRenameRequestDto directoryRenameRequestDto, CancellationToken cancellationToken)
     {
       cancellationToken.ThrowIfCancellationRequested();
       _ = string.IsNullOrWhiteSpace(fileSystemName) ? throw new ArgumentNullException($"expects the {nameof(fileSystemName)} to be defined") : string.Empty;
@@ -164,7 +165,7 @@ namespace Fixit.FileManagement.Lib.Managers.Internal
 
     #region Get Directory Structure
 
-    public async Task<FileSystemRootDirectoryDto> GetDirectoryStructureAsync(string fileSystemName, long fileSystemId, string folderPath, CancellationToken cancellationToken, bool includeItems = false, bool singleLevel = false)
+    public async Task<FileSystemRootDirectoryDto> GetDirectoryStructureAsync(string fileSystemName, string fileSystemId, string folderPath, CancellationToken cancellationToken, bool includeItems = false, bool singleLevel = false)
     {
       cancellationToken.ThrowIfCancellationRequested();
       _ = string.IsNullOrWhiteSpace(fileSystemName) ? throw new ArgumentNullException($"expects the {nameof(fileSystemName)} to be defined") : string.Empty;
@@ -190,7 +191,7 @@ namespace Fixit.FileManagement.Lib.Managers.Internal
       return fileSystemItemVm;
     }
 
-    public FileSystemRootDirectoryDto GetDirectoryStructure(string fileSystemName, long fileSystemId, string folderPath, bool includeItems = false, bool singleLevel = false)
+    public FileSystemRootDirectoryDto GetDirectoryStructure(string fileSystemName, string fileSystemId, string folderPath, bool includeItems = false, bool singleLevel = false)
     {
       _ = string.IsNullOrWhiteSpace(fileSystemName) ? throw new ArgumentNullException($"expects the {nameof(fileSystemName)} to be defined") : string.Empty;
 
@@ -216,7 +217,7 @@ namespace Fixit.FileManagement.Lib.Managers.Internal
     }
 
 
-    public async Task<FileSystemDirectoryItemsDto> GetDirectoryItemsAsync(string fileSystemName, long fileSystemId, string folderPath, CancellationToken cancellationToken, bool ignorePrefix = false, bool includeItems = true)
+    public async Task<FileSystemDirectoryItemsDto> GetDirectoryItemsAsync(string fileSystemName, string fileSystemId, string folderPath, CancellationToken cancellationToken, bool ignorePrefix = false, bool includeItems = true)
     {
       _ = string.IsNullOrWhiteSpace(fileSystemName) ? throw new ArgumentNullException($"expects the {nameof(fileSystemName)} to be defined") : string.Empty;
 
@@ -233,7 +234,7 @@ namespace Fixit.FileManagement.Lib.Managers.Internal
       return _mapper.Map<FileSystemDirectoryDto, FileSystemDirectoryItemsDto>(fileSystemItemDto);
     }
 
-    public FileSystemDirectoryItemsDto GetDirectoryItems(string fileSystemName, long fileSystemId, string folderPath, bool ignorePrefix = false, bool includeItems = true)
+    public FileSystemDirectoryItemsDto GetDirectoryItems(string fileSystemName, string fileSystemId, string folderPath, bool ignorePrefix = false, bool includeItems = true)
     {
       _ = string.IsNullOrWhiteSpace(fileSystemName) ? throw new ArgumentNullException($"expects the {nameof(fileSystemName)} to be defined") : string.Empty;
 
