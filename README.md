@@ -1,20 +1,14 @@
 # Introduction 
-TODO: Give a short introduction of your project. Let this section explain the objectives or the motivation behind this project. 
+This repository contains:
+1. The internal lib used by the service to perform all file-specific operations, including uploading files, persisting them, retrieving temporary SAS tokens, etc. 
+3. The CI/CD terraform-based files, and Azure yaml, allowing the deployment of this service
+4. The RestAPI interface (deployed in a multi-tenant fashion), allowing for the client application to get relevant data
+5. The event-driven Azure trigger functions' project, handling any relevant message on listened topics  
 
 # Getting Started
-TODO: Guide users through getting your code up and running on their own system. In this section you can talk about:
-1.	Installation process
-2.	Software dependencies
-3.	Latest releases
-4.	API references
+1.	This project contains the rest api, of which the entry point is the program.cs file
+2.	There are internal nuget packages that this service uses, of which all can be found under the Fixit "list"
+3.	Official releases of this service are held in a private Azure Devops project, and will be migrated here shortly
 
 # Build and Test
-TODO: Describe and show how to build your code and run the tests. 
-
-# Contribute
-TODO: Explain how other users and developers can contribute to make your code better. 
-
-If you want to learn more about creating good readme files then refer the following [guidelines](https://docs.microsoft.com/en-us/azure/devops/repos/git/create-a-readme?view=azure-devops). You can also seek inspiration from the below readme files:
-- [ASP.NET Core](https://github.com/aspnet/Home)
-- [Visual Studio Code](https://github.com/Microsoft/vscode)
-- [Chakra Core](https://github.com/Microsoft/ChakraCore)
+1. For each C# project, there exists an equivalent unit tests project, all under the same solution. 
