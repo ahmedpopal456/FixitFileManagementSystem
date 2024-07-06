@@ -1,0 +1,61 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "appName": {
+      "type": "string"
+    },
+    "functionSku": {
+      "type": "string"
+    },
+    "functionTier": {
+      "type": "string"
+    },
+    "KeyVaultName": {
+      "type": "string"
+    },
+    "functionParameters": {
+      "type": "array"
+    }
+  },
+  "variables": {
+    "skuName": "[parameters('functionSku')]",
+    "skuTier": "[parameters('functionTier')]",
+    "appPlanName": "[concat(parameters('appName'),'-','plan')]"
+  },
+  "resources": [
+    {
+      "type": "Microsoft.Web/serverfarms",
+      "apiVersion": "2018-02-01",
+      "location": "[resourceGroup().location]",
+      "name": "[variables('appPlanName')]",
+      "properties": {},
+      "sku": {
+        "name": "[variables('skuName')]",
+        "tier": "[variables('skuTier')]"
+      }
+    },
+    {
+      "apiVersion": "2016-08-01",
+      "type": "Microsoft.Web/sites",
+      "name": "[parameters('appName')]",
+      "location": "[resourceGroup().location]",
+      "kind": "functionapp",
+      "identity": {
+        "type": "SystemAssigned"
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Web/serverfarms', variables('appPlanName'))]"
+      ],
+      "properties": {
+        "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', variables('appPlanName'))]",
+        "httpsOnly": true,
+        "siteConfig": {
+          "appSettings": "[parameters('functionParameters')]"
+        }
+      }
+    }
+  ],
+  "outputs": {
+  }
+}

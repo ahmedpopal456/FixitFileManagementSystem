@@ -1,0 +1,432 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "_artifactsLocation": {
+      "type": "string"
+    },
+    "_artifactsLocationSasToken": {
+      "type": "securestring"
+    },
+    "baseAppName": {
+      "type": "string",
+      "defaultValue": "fixit"
+    },
+    "appName": {
+      "type": "string",
+      "defaultValue": "fms"
+    },
+    "eventGridTopicName": {
+      "type": "string",
+      "defaultValue": "fixit-dev-fms-top"
+    },
+    "eventGridSubscriptionName": {
+      "type": "string",
+      "defaultValue": "fixit-dev-fms-sub"
+    },
+    "environment": {
+      "type": "string",
+      "allowedValues": [
+        "sandbox",
+        "dev",
+        "stage",
+        "prod"
+      ]
+    },
+    "storageEndpointSuffix": {
+      "type": "string",
+      "metadata": {
+        "description": "Storage account endpoint suffix"
+      }
+    },
+    "storageSku": {
+      "type": "string",
+      "defaultValue": "Standard_LRS"
+    },
+    "webAppSku": {
+      "type": "string",
+      "defaultValue": "S1"
+    },
+    "functionSku": {
+      "type": "string",
+      "defaultValue": "Y1"
+    },
+    "functionTier": {
+      "type": "string",
+      "defaultValue": "Dynamic"
+    }
+  },
+  "variables": {
+    "keyVaultName": "[concat('fixit-', parameters('environment'), '-', 'keyvault')]",
+    "templateFolder": "nestedtemplates",
+    "commonResourceGroupName": "[concat(parameters('baseAppName'),'-', parameters('environment'), '-', 'common')]",
+    "webAppName": "[concat(parameters('baseAppName'),'-',parameters('appName'))]",
+    "funcStorageName": "[concat(parameters('baseAppName'),parameters('appName'),parameters('environment'),'sa')]",
+    "functionAppName": "[concat(parameters('baseAppName'),'-',parameters('appName'),'-', parameters('environment'),'-','func')]",
+    "onFileUrlsExpiredEventGridTopicName": "[concat(parameters('baseAppName'),'-', parameters('environment'), '-','onfileurlsexpired-topic')]",
+    "onFileMetadataUpdateEventGridTopicName": "[concat(parameters('baseAppName'),'-', parameters('environment'), '-','onfilemetadataupdate-topic')]",
+    "eventGridTopicFileName": "eventgrid.topic.template.json",
+    "functionTemplateFileName": "function.template.json",
+    "storageTemplateFileName": "storage.template.json",
+    "dataLakeTemplateFileName": "datalake.template.json",
+    "webAppTemplateFileName": "webapp.template.json",
+    "keyVaultTemplateFileName": "keyvault.secret.template.json"
+  },
+  "resources": [
+    {
+      "comments": "Create File Urls Expired Event Grid Topic",
+      "name": "[variables('onFileUrlsExpiredEventGridTopicName')]",
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2019-05-01",
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[concat(parameters('_artifactsLocation'), '/', variables('templateFolder'), '/', variables('eventGridTopicFileName'), parameters('_artifactsLocationSasToken'))]",
+          "contentVersion": "1.0.0.0"
+        },
+        "parameters": {
+          "eventGridTopicName": {
+            "value": "[variables('onFileUrlsExpiredEventGridTopicName')]"
+          },
+          "displayName": {
+            "value": "FileUrlsExpiredEventGridTopicName"
+          }
+        }
+      }
+    },
+    {
+      "comments": "Adds Event Grid File Urls Expired Topic Endpoint in the KeyVault",
+      "apiVersion": "2017-05-10",
+      "resourceGroup": "[variables('commonResourceGroupName')]",
+      "name": "[concat(variables('keyVaultName'), variables('onFileUrlsExpiredEventGridTopicName'),'endpoint')]",
+      "type": "Microsoft.Resources/deployments",
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[concat(parameters('_artifactsLocation'), '/', variables('templateFolder'), '/', variables('keyVaultTemplateFileName'), parameters('_artifactsLocationSasToken'))]",
+          "contentVersion": "1.0.0.0"
+        },
+        "parameters": {
+          "keyVaultName": {
+            "value": "[variables('keyVaultName')]"
+          },
+          "secretName": {
+            "value": "FIXIT-FMS-EG-ONIMAGEEXPIRED-TE"
+          },
+          "secretValue": {
+            "value": "[reference(variables('onFileUrlsExpiredEventGridTopicName')).outputs.eventGridTopicEndpoint.value]"
+          }
+        }
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Resources/deployments', variables('onFileUrlsExpiredEventGridTopicName'))]"
+      ]
+    },
+    {
+      "comments": "Adds Event Grid File Urls Expired Topic Key in the KeyVault",
+      "apiVersion": "2017-05-10",
+      "resourceGroup": "[variables('commonResourceGroupName')]",
+      "name": "[concat(variables('keyVaultName'), variables('onFileUrlsExpiredEventGridTopicName'),'key')]",
+      "type": "Microsoft.Resources/deployments",
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[concat(parameters('_artifactsLocation'), '/', variables('templateFolder'), '/', variables('keyVaultTemplateFileName'), parameters('_artifactsLocationSasToken'))]",
+          "contentVersion": "1.0.0.0"
+        },
+        "parameters": {
+          "keyVaultName": {
+            "value": "[variables('keyVaultName')]"
+          },
+          "secretName": {
+            "value": "FIXIT-FMS-EG-ONIMAGEEXPIRED-TK"
+          },
+          "secretValue": {
+            "value": "[reference(variables('onFileUrlsExpiredEventGridTopicName')).outputs.eventGridTopicKey.value]"
+          }
+        }
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Resources/deployments', variables('onFileUrlsExpiredEventGridTopicName'))]"
+      ]
+    },
+    {
+      "comments": "Create File Metadata Update Event Grid Topic",
+      "name": "[variables('onFileMetadataUpdateEventGridTopicName')]",
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2019-05-01",
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[concat(parameters('_artifactsLocation'), '/', variables('templateFolder'), '/', variables('eventGridTopicFileName'), parameters('_artifactsLocationSasToken'))]",
+          "contentVersion": "1.0.0.0"
+        },
+        "parameters": {
+          "eventGridTopicName": {
+            "value": "[variables('onFileMetadataUpdateEventGridTopicName')]"
+          },
+          "displayName": {
+            "value": "FileMetadataUpdateEventGridTopicName"
+          }
+        }
+      }
+    },
+    {
+      "comments": "Adds Event Grid File Metadata Update Topic Endpoint in the KeyVault",
+      "apiVersion": "2017-05-10",
+      "resourceGroup": "[variables('commonResourceGroupName')]",
+      "name": "[concat(variables('keyVaultName'), variables('onFileMetadataUpdateEventGridTopicName'),'endpoint')]",
+      "type": "Microsoft.Resources/deployments",
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[concat(parameters('_artifactsLocation'), '/', variables('templateFolder'), '/', variables('keyVaultTemplateFileName'), parameters('_artifactsLocationSasToken'))]",
+          "contentVersion": "1.0.0.0"
+        },
+        "parameters": {
+          "keyVaultName": {
+            "value": "[variables('keyVaultName')]"
+          },
+          "secretName": {
+            "value": "FIXIT-FMS-EG-ONIMAGEURLSUPDATE-TE"
+          },
+          "secretValue": {
+            "value": "[reference(variables('onFileMetadataUpdateEventGridTopicName')).outputs.eventGridTopicEndpoint.value]"
+          }
+        }
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Resources/deployments', variables('onFileMetadataUpdateEventGridTopicName'))]"
+      ]
+    },
+    {
+      "comments": "Adds Event Grid File Metadata Update Topic Key in the KeyVault",
+      "apiVersion": "2017-05-10",
+      "resourceGroup": "[variables('commonResourceGroupName')]",
+      "name": "[concat(variables('keyVaultName'), variables('onFileMetadataUpdateEventGridTopicName'),'key')]",
+      "type": "Microsoft.Resources/deployments",
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[concat(parameters('_artifactsLocation'), '/', variables('templateFolder'), '/', variables('keyVaultTemplateFileName'), parameters('_artifactsLocationSasToken'))]",
+          "contentVersion": "1.0.0.0"
+        },
+        "parameters": {
+          "keyVaultName": {
+            "value": "[variables('keyVaultName')]"
+          },
+          "secretName": {
+            "value": "FIXIT-FMS-EG-ONIMAGEURLSUPDATE-TK"
+          },
+          "secretValue": {
+            "value": "[reference(variables('onFileMetadataUpdateEventGridTopicName')).outputs.eventGridTopicKey.value]"
+          }
+        }
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Resources/deployments', variables('onFileMetadataUpdateEventGridTopicName'))]"
+      ]
+    },
+    {
+      "comments": "Deploy FMS Web App",
+      "name": "[variables('webAppName')]",
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2017-05-10",
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[concat(parameters('_artifactsLocation'), '/', variables('templateFolder'), '/', variables('webAppTemplateFileName'), parameters('_artifactsLocationSasToken'))]",
+          "contentVersion": "1.0.0.0"
+        },
+        "parameters": {
+          "webAppServiceName": {
+            "value": "[concat(variables('webAppName'),'-',parameters('environment'),'-','app')]"
+          },
+          "webAppServicePlanName": {
+            "value": "[concat(variables('webAppName'),'-',parameters('environment'),'-','serviceplan')]"
+          },
+          "sku": {
+            "value": "[parameters('webAppSku')]"
+          }
+        }
+      }
+    },
+    {
+      "comments": "Deploy FMS Storage",
+      "name": "[variables('funcStorageName')]",
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2017-05-10",
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[concat(parameters('_artifactsLocation'), '/', variables('templateFolder'), '/', variables('storageTemplateFileName'), parameters('_artifactsLocationSasToken'))]",
+          "contentVersion": "1.0.0.0"
+        },
+        "parameters": {
+          "storageName": {
+            "value": "[variables('funcStorageName')]"
+          },
+          "storageSku": {
+            "value": "[parameters('storageSku')]"
+          }
+        }
+      }
+    },
+    {
+      "comments": "Adds the Storage Key to the KeyVault",
+      "resourceGroup": "[variables('commonResourceGroupName')]",
+      "apiVersion": "2017-05-10",
+      "name": "[concat(variables('keyVaultName'),'func')]",
+      "type": "Microsoft.Resources/deployments",
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[concat(parameters('_artifactsLocation'), '/', variables('templateFolder'), '/', variables('keyVaultTemplateFileName'), parameters('_artifactsLocationSasToken'))]",
+          "contentVersion": "1.0.0.0"
+        },
+        "parameters": {
+          "keyVaultName": {
+            "value": "[variables('keyVaultName')]"
+          },
+          "secretName": {
+            "value": "FIXIT-FMST-SA-AK"
+          },
+          "secretValue": {
+            "value": "[reference(variables('funcStorageName')).outputs.storageAccountKey.value]"
+          }
+        }
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Resources/deployments', variables('funcStorageName'))]"
+      ]
+    },
+    {
+      "comments": "Deploy FMS Function",
+      "name": "[variables('functionAppName')]",
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2017-05-10",
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[concat(parameters('_artifactsLocation'), '/', variables('templateFolder'), '/', variables('functionTemplateFileName'), parameters('_artifactsLocationSasToken'))]",
+          "contentVersion": "1.0.0.0"
+        },
+        "parameters": {
+          "appName": {
+            "value": "[variables('functionAppName')]"
+          },
+          "KeyVaultName": {
+            "value": "[variables('keyVaultName')]"
+          },
+          "functionSku": {
+            "value": "[parameters('functionSku')]"
+          },
+          "functionTier": {
+            "value": "[parameters('functionTier')]"
+          },
+          "functionParameters": {
+            "value": [
+              {
+                "name": "FUNCTIONS_WORKER_RUNTIME",
+                "value": "dotnet"
+              },
+              {
+                "name": "FUNCTIONS_EXTENSION_VERSION",
+                "value": "~3"
+              },
+              {
+                "name": "AzureWebJobsStorage",
+                "value": "[concat('DefaultEndpointsProtocol=https;AccountName=', variables('funcStorageName'), ';', 'AccountKey=', reference(variables('funcStorageName')).outputs.storageAccountKey.value, ';', 'EndpointSuffix=core.windows.net')]"
+              },
+              {
+                "name": "APPINSIGHTS_INSTRUMENTATIONKEY",
+                "value": "{{appInsightsKey}}"
+              },
+              {
+                "name": "WEBSITE_CONTENTAZUREFILECONNECTIONSTRING",
+                "value": "[concat('DefaultEndpointsProtocol=https;AccountName=', variables('funcStorageName'), ';', 'AccountKey=', reference(variables('funcStorageName')).outputs.storageAccountKey.value, ';', 'EndpointSuffix=core.windows.net')]"
+              },
+              {
+                "name": "WEBSITE_CONTENTSHARE",
+                "value": "[variables('functionAppName')]"
+              },
+              {
+                "name": "ThumbnailWidth",
+                "value": "{{thumbnailWidth}}"
+              },
+              {
+                "name": "ThumbnailHeight",
+                "value": "{{thumbnailHeight}}"
+              },
+              {
+                "name": "FIXIT-FMS-SA-CS",
+                "value": "{{empowerStorageConnectionString}}"
+              },
+              {
+                "name": "FIXIT-FMS-SA-AK",
+                "value": "{{empowerStorageKey}}"
+              },
+              {
+                "name": "FIXIT-FMS-SA-AN",
+                "value": "{{empowerStorageName}}"
+              },
+              {
+                "name": "FIXIT-FMS-SA-EP",
+                "value": "{{empowerStorageEndpoint}}"
+              },
+              {
+                "name": "FIXIT-FMS-EG-ONIMAGEEXPIRED-TE",
+                "value": "[reference(variables('onFileUrlsExpiredEventGridTopicName')).outputs.eventGridTopicEndpoint.value]"
+              },
+              {
+                "name": "FIXIT-FMS-EG-ONIMAGEEXPIRED-TK",
+                "value": "[reference(variables('onFileUrlsExpiredEventGridTopicName')).outputs.eventGridTopicKey.value]"
+              },
+              {
+                "name": "FIXIT-FMS-EG-ONIMAGEURLSUPDATE-TE",
+                "value": "[reference(variables('onFileMetadataUpdateEventGridTopicName')).outputs.eventGridTopicEndpoint.value]"
+              },
+              {
+                "name": "FIXIT-FMS-EG-ONIMAGEURLSUPDATE-TK",
+                "value": "[reference(variables('onFileMetadataUpdateEventGridTopicName')).outputs.eventGridTopicKey.value]"
+              },
+              {
+                "name": "FIXIT-FMS-THUMBNAILS-CONTAINER",
+                "value": "thumbnails"
+              },
+              {
+                "name": "FIXIT-FMS-INSIGHTS-CONTAINER",
+                "value": "insights"
+              },
+              {
+                "name": "FIXIT-FMS-ASSETS-CONTAINER",
+                "value": "assets"
+              },
+              {
+                "name": "FIXIT-FMS-DOWNLOADLINK-EXPIRYTIME",
+                "value": "4"
+              },
+              {
+                "name": "FIXIT-FMS-THUMBNAILLINK-EXPIRYTIME",
+                "value": "876000"
+              },
+              {
+                "name": "FIXIT-FMS-BASELINK-EXPIRYTIME",
+                "value": "876000"
+              },
+              {
+                "name": "FIXIT-FMS-CONFIGURATION-TABLE",
+                "value": "fileSystemConfigurationTable"
+              },
+              {
+                "name": "FIXIT-FMS-CONFIGURATION-SETTINGS",
+                "value": "fileSystemConfigurationSettings"
+              }
+            ]
+          }
+        }
+      }
+    }
+  ],
+  "outputs": {}
+}

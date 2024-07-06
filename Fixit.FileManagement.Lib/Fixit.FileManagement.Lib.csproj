@@ -1,0 +1,17 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="Managers\IJobManager.cs" />
+    <Compile Remove="Managers\Internal\JobManager.cs" />
+  </ItemGroup>
+  
+  <ItemGroup>
+    <PackageReference Include="Fixit.Core.Storage" Version="1.0.37-alpha" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.Core" Version="2.2.5" />
+  </ItemGroup>
+
+</Project>

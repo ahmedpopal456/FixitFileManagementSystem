@@ -1,0 +1,128 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "_artifactsLocation": {
+      "type": "string"
+    },
+    "_artifactsLocationSasToken": {
+      "type": "securestring"
+    },
+    "baseAppName": {
+      "type": "string",
+      "defaultValue": "fixit"
+    },
+    "appName": {
+      "type": "string",
+      "defaultValue": "fms"
+    },
+    "eventGridTopicName": {
+      "type": "string",
+      "defaultValue": "fixit-dev-fms-top"
+    },
+    "eventGridSubscriptionName": {
+      "type": "string",
+      "defaultValue": "fixit-dev-fms-sub"
+    },
+    "environment": {
+      "type": "string",
+      "allowedValues": [ "sandbox", "dev", "stage", "prod" ]
+    },
+    "storageEndpointSuffix": {
+      "type": "string",
+      "metadata": {
+        "description": "Storage account endpoint suffix"
+      }
+    },
+    "storageSku": {
+      "type": "string",
+      "defaultValue": "Standard_LRS"
+    },
+    "webAppSku": {
+      "type": "string",
+      "defaultValue": "S1"
+    },
+    "functionSku": {
+      "type": "string",
+      "defaultValue": "Y1"
+    },
+    "functionTier": {
+      "type": "string",
+      "defaultValue": "Dynamic"
+    }
+  },
+  "variables": {
+    "keyVaultName": "[concat('fixit-', parameters('environment'), '-', 'keyvault')]",
+    "templateFolder": "nestedtemplates",
+
+    "commonResourceGroupName": "[concat(parameters('baseAppName'),'-', parameters('environment'), '-', 'common')]",
+    "webAppName": "[concat(parameters('baseAppName'),'-',parameters('appName'))]",
+    "storageName": "[concat(parameters('baseAppName'),parameters('appName'),parameters('environment'),'dl')]",
+
+    "storageTemplateFileName": "storage.template.json",
+    "dataLakeTemplateFileName": "datalake.template.json",
+    "webAppTemplateFileName": "webapp.template.json",
+    "keyVaultTemplateFileName": "keyvault.secret.template.json"
+  },
+  "resources": [
+    {
+      "comments": "Deploy DL Storage",
+      "name": "[variables('storageName')]",
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2017-05-10",
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[concat(parameters('_artifactsLocation'), '/', variables('templateFolder'), '/', variables('dataLakeTemplateFileName'), parameters('_artifactsLocationSasToken'))]",
+          "contentVersion": "1.0.0.0"
+        },
+        "parameters": {
+          "storageName": {
+            "value": "[variables('storageName')]"
+          },
+          "storageSku": {
+            "value": "[parameters('storageSku')]"
+          },
+          "eventGridSubscriptionName": {
+            "value": "[parameters('eventGridSubscriptionName')]"
+          },
+          "eventGridTopicName": {
+            "value": "[parameters('eventGridTopicName')]"
+          },
+          "eventGridFunctionUrl": {
+            "value": "{{functionUrl}}"
+          }
+        }
+      }
+    },
+    {
+      "comments": "Adds the DataLake Storage Key to the KeyVault",
+      "resourceGroup": "[variables('commonResourceGroupName')]",
+      "apiVersion": "2017-05-10",
+      "name": "[concat(variables('keyVaultName'),'dl')]",
+      "type": "Microsoft.Resources/deployments",
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[concat(parameters('_artifactsLocation'), '/', variables('templateFolder'), '/', variables('keyVaultTemplateFileName'), parameters('_artifactsLocationSasToken'))]",
+          "contentVersion": "1.0.0.0"
+        },
+        "parameters": {
+          "keyVaultName": {
+            "value": "[variables('keyVaultName')]"
+          },
+          "secretName": {
+            "value": "FIXIT-SA-AK"
+          },
+          "secretValue": {
+            "value": "[reference(variables('storageName')).outputs.storageAccountKey.value]"
+          }
+        }
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Resources/deployments', variables('storageName'))]"
+      ]
+    }
+  ],
+  "outputs": {}
+}
